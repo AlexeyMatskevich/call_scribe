@@ -1,59 +1,61 @@
 {
   description = "CallScribe";
+
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url      = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    flake-utils.url  = "github:numtide/flake-utils";
   };
-  outputs = { self, nixpkgs }:
-    let
-      supportedSystems = [ "x86_64-linux" ];
-      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
-      pkgsFor = nixpkgs.legacyPackages;
-    in {
-      packages = forAllSystems (system: {
-        default = pkgsFor.${system}.callPackage ./. { };
-      });
 
-      devShells = forAllSystems (system:
-        let
-          pkgs = pkgsFor.${system};
-          rustToolchain = with pkgs; [
-            cargo
-            rustc
-            rustfmt
-            rust-analyzer
-            clippy
+  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        overlays = [ (import rust-overlay) ];
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
+      in
+      {
+        devShells.default = let
+          # Define rustVersion here in the devShell context
+          rustVersion = pkgs.rust-bin.stable.latest.default;
+        in pkgs.mkShell {
+          buildInputs = with pkgs; [
+            # Rust with IDE components
+            (rustVersion.override {
+              extensions = [ "rust-src" "clippy" "rustfmt" "rust-analyzer" ];
+            })
+
+            # Системные зависимости
+            pkg-config
+            alsa-lib
           ];
-        in {
-          default = pkgs.mkShell {
-            buildInputs = rustToolchain ++ (with pkgs; [
-              # Add any other packages you need here
-            ]);
 
-            shellHook = ''
-              # Create a temporary directory to simulate the Rust toolchain structure
-              export RUST_FAKE_HOME="$PWD/.rust-toolchain-for-IDE"
-              mkdir -p $RUST_FAKE_HOME/bin
+          shellHook = ''
+            # Create a special directory structure for Rust Rover
+            export RUST_ROVER_HOME="$PWD/.rust-rover"
+            mkdir -p $RUST_ROVER_HOME/bin
 
-              # Create symbolic links for Rust components
-              for cmd in cargo rustc rustfmt rust-analyzer clippy; do
-                if command -v $cmd &> /dev/null; then
-                  ln -sf $(command -v $cmd) $RUST_FAKE_HOME/bin/$cmd
-                fi
-              done
+            # Create symbolic links to Rust components
+            for cmd in rustc cargo rustfmt clippy rust-analyzer; do
+              if command -v $cmd &> /dev/null; then
+                ln -sf $(command -v $cmd) $RUST_ROVER_HOME/bin/$cmd
+              fi
+            done
 
-              # Export an environment variable so we know where our fake toolchain is located
-              export RUST_ROVER_TOOLCHAIN="$RUST_FAKE_HOME"
+            # Export the path to the Rust standard library sources
+            export RUST_SRC_PATH="${rustVersion}/lib/rustlib/src/rust/library"
 
-              echo ""
-              echo "Rust toolchain for the IDE is configured in $RUST_FAKE_HOME"
-              echo "Use this path in the Rust Rover settings: $RUST_FAKE_HOME/bin"
-              echo ""
+            echo ""
+            echo "Rust Rover environment configured in $RUST_ROVER_HOME"
+            echo "In Rust Rover settings, specify the path: $RUST_ROVER_HOME/bin"
+            echo "In Rust Rover settings, specify RUST_SRC_PATH: $RUST_SRC_PATH"
+            echo ""
 
-              # Очистка при выходе из оболочки
-              trap "rm -rf $RUST_FAKE_HOME" EXIT
-            '';
-          };
-        }
-      );
-    };
+            # Cleaning when leaving the shell
+            trap "rm -rf $RUST_ROVER_HOME" EXIT
+          '';
+        };
+      }
+    );
 }

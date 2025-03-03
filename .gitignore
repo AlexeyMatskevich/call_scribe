@@ -1,3 +1,5 @@
 /target
-/.rust-toolchain-for-IDE
+/.rustup
+/.rust-rover
 /.idea
+/.cargo
