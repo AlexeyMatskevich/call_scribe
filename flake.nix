@@ -7,7 +7,7 @@
     flake-utils.url  = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, rust-overlay, flake-utils, ... }:
+  outputs = { nixpkgs, rust-overlay, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [ (import rust-overlay) ];
@@ -20,7 +20,9 @@
           buildInputs = [
             openssl
             pkg-config
-            rust-bin.beta.latest.default
+            (rust-bin.beta.latest.default.override {
+              extensions = [ "rust-analyzer" "rust-src" ];
+            })
 
             # Slint UI dependencies
             wayland
@@ -38,6 +40,9 @@
             # Skia build dependencies
             clang
             python3
+
+            # Nix LSP
+            nixd
           ];
 
           nativeBuildInputs = [
@@ -61,6 +66,10 @@
 
           # For Skia/bindgen
           LIBCLANG_PATH = "${llvmPackages.libclang.lib}/lib";
+
+          shellHook = ''
+            source ./scripts/dev-setup.sh
+          '';
         };
       }
     );
