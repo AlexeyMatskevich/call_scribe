@@ -43,6 +43,12 @@
 
             # Nix LSP
             nixd
+
+            # Serena MCP dependencies
+            uv
+
+            # MCP servers (Context7, GitHub)
+            nodejs_22
           ];
 
           nativeBuildInputs = [
