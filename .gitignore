@@ -1,2 +1,5 @@
 /target
 .zed/
+.mcp.json
+serena_config.yml
+.venv/
