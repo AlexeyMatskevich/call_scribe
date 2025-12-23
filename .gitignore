@@ -4,3 +4,4 @@
 serena_config.yml
 .venv/
 scripts/serena-mcp
+.claude/settings.local.json
