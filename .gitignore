@@ -3,3 +3,4 @@
 .mcp.json
 serena_config.yml
 .venv/
+scripts/serena-mcp

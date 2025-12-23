@@ -15,6 +15,28 @@
           inherit system overlays;
         };
       in
+      let
+        inherit (pkgs) stdenv lib;
+        isLinux = stdenv.isLinux;
+        isDarwin = stdenv.isDarwin;
+
+        # Linux-specific dependencies for Slint UI (X11/Wayland)
+        linuxDeps = with pkgs; lib.optionals isLinux [
+          wayland
+          libxkbcommon
+          libGL
+          xorg.libX11
+          xorg.libXcursor
+          xorg.libXi
+          xorg.libXrandr
+        ];
+
+        # macOS-specific dependencies
+        # Note: Apple frameworks are linked automatically by Cargo on macOS
+        darwinDeps = with pkgs; lib.optionals isDarwin [
+          libiconv  # Required for some Rust crates on macOS
+        ];
+      in
       {
         devShells.default = with pkgs; mkShell {
           buildInputs = [
@@ -24,15 +46,6 @@
               extensions = [ "rust-analyzer" "rust-src" ];
             })
 
-            # Slint UI dependencies
-            wayland
-            libxkbcommon
-            libGL
-            xorg.libX11
-            xorg.libXcursor
-            xorg.libXi
-            xorg.libXrandr
-
             # Fonts
             fontconfig
             freetype
@@ -40,6 +53,7 @@
             # Skia build dependencies
             clang
             python3
+            ninja
 
             # Nix LSP
             nixd
@@ -49,26 +63,21 @@
 
             # MCP servers (Context7, GitHub)
             nodejs_22
-          ];
+          ] ++ linuxDeps ++ darwinDeps;
 
           nativeBuildInputs = [
             clang
           ];
 
-          LD_LIBRARY_PATH = lib.makeLibraryPath [
-            wayland
-            libxkbcommon
+          # LD_LIBRARY_PATH only needed on Linux
+          LD_LIBRARY_PATH = lib.optionalString isLinux (lib.makeLibraryPath ([
             libGL
-            xorg.libX11
-            xorg.libXcursor
-            xorg.libXi
-            xorg.libXrandr
             fontconfig
             freetype
-          ];
+          ] ++ linuxDeps));
 
-          # Use system fontconfig (inherits your system font settings)
-          FONTCONFIG_FILE = "/etc/fonts/fonts.conf";
+          # Use system fontconfig on Linux (inherits your system font settings)
+          FONTCONFIG_FILE = lib.optionalString isLinux "/etc/fonts/fonts.conf";
 
           # For Skia/bindgen
           LIBCLANG_PATH = "${llvmPackages.libclang.lib}/lib";
