@@ -1,0 +1,27 @@
+import { Theme, Spacing } from "../tokens.slint";
+
+// Branded app logo icon (purple square with mic)
+// Reusable for sidebar, splash screen, about page
+export component AppLogo inherits Rectangle {
+    in property <length> size: 32px;
+
+    width: size;
+    height: size;
+    border-radius: Spacing.border-radius-lg;
+    background: Theme.primary;
+
+    // Shadow
+    drop-shadow-blur: 15px;
+    drop-shadow-offset-y: 10px;
+    drop-shadow-color: #615fff33;
+
+    Image {
+        width: 18px;
+        height: 18px;
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        source: @image-url("../../assets/icons/logo-mic.svg");
+        colorize: white;
+        image-fit: contain;
+    }
+}

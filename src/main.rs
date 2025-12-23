@@ -1,5 +1,5 @@
 slint::include_modules!();
 
 fn main() {
-    HelloWorld::new().unwrap().run().unwrap();
+    MainWindow::new().unwrap().run().unwrap();
 }

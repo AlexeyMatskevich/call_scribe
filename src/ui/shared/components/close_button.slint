@@ -1,0 +1,54 @@
+import { Theme, Spacing } from "../tokens.slint";
+
+// Close button (X icon) for dialogs, panels, drawers
+export component CloseButton inherits Rectangle {
+    callback clicked();
+
+    // Accessibility (for screen readers)
+    accessible-role: button;
+    accessible-label: "Close";
+    accessible-action-default => { root.clicked(); }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    width: 36px;
+    height: 36px;
+    border-radius: Spacing.border-radius;
+
+    // Dynamic background based on interaction state
+    background: touch.pressed ? Theme.input-border
+              : touch.has-hover ? Theme.nav-active-background
+              : transparent;
+    animate background { duration: 150ms; }
+
+    // Focus ring
+    border-width: focus-scope.has-focus ? 2px : 0px;
+    border-color: Theme.primary;
+    animate border-width { duration: 150ms; }
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    Image {
+        x: (parent.width - Spacing.icon-size) / 2;
+        y: (parent.height - Spacing.icon-size) / 2;
+        width: Spacing.icon-size;
+        height: Spacing.icon-size;
+        source: @image-url("../../assets/icons/close.svg");
+        colorize: Theme.text-muted;
+        image-fit: contain;
+    }
+
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}

@@ -1,0 +1,74 @@
+import { Theme, Spacing } from "../shared/mod.slint";
+import { Sidebar, MobileDrawer } from "../widgets/mod.slint";
+import { MainContent } from "main_content.slint";
+
+// Main application window with responsive shell layout
+export component MainWindow inherits Window {
+    title: "CallScribe";
+    background: Theme.background;
+
+    // Preferred size (can be resized)
+    preferred-width: 1280px;
+    preferred-height: 800px;
+    min-width: 320px;
+    min-height: 480px;
+
+    // Current active page index (for visual state)
+    // 0 = Sessions, 1 = Active Meeting, 2 = Voice Library, 3 = Settings
+    out property <int> current-page: 0;
+
+    // Responsive states - computed from window width
+    property <bool> is-mobile: root.width < Spacing.breakpoint-mobile;
+    property <bool> is-tablet: root.width >= Spacing.breakpoint-mobile && root.width < Spacing.breakpoint-tablet;
+    property <bool> is-desktop: root.width >= Spacing.breakpoint-tablet;
+
+    // Sidebar collapsed state (tablet only, desktop is expanded)
+    property <bool> is-sidebar-collapsed: is-tablet;
+
+    // Computed sidebar width based on responsive state
+    property <length> current-sidebar-width: is-mobile
+        ? 0px
+        : (is-sidebar-collapsed ? Spacing.sidebar-width-collapsed : Spacing.sidebar-width);
+
+    // Mobile drawer state
+    property <bool> is-drawer-open: false;
+
+    // Desktop/Tablet: Show sidebar (hidden on mobile)
+    Sidebar {
+        x: 0;
+        y: 0;
+        height: 100%;
+        visible: !is-mobile;
+        active-index: current-page;
+        is-collapsed: is-sidebar-collapsed;
+
+        navigate(index) => { current-page = index; }
+    }
+
+    // Main content area (header + page routing)
+    MainContent {
+        x: current-sidebar-width;
+        y: 0;
+        width: root.width - current-sidebar-width;
+        height: root.height;
+        current-page: root.current-page;
+        is-mobile: root.is-mobile;
+        menu-clicked => { is-drawer-open = true; }
+    }
+
+    // Mobile: Drawer overlay (must be last to render on top)
+    if is-mobile: MobileDrawer {
+        x: 0;
+        y: 0;
+        width: 100%;
+        height: 100%;
+        is-open: is-drawer-open;
+        active-index: current-page;
+
+        close-requested => { is-drawer-open = false; }
+        navigate(index) => {
+            current-page = index;
+            is-drawer-open = false;
+        }
+    }
+}

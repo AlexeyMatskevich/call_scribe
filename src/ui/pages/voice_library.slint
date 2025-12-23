@@ -1,0 +1,24 @@
+import { Theme, Spacing, Typography } from "../shared/mod.slint";
+
+// Voice Library page placeholder
+export component VoiceLibraryPage inherits Rectangle {
+    background: Theme.background;
+
+    VerticalLayout {
+        alignment: center;
+
+        Text {
+            text: "Voice Library Page";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-xl;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "Voice profiles and speaker management will be implemented here";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-base;
+            horizontal-alignment: center;
+        }
+    }
+}

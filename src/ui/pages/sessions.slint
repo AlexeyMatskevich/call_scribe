@@ -1,0 +1,25 @@
+import { Theme, Spacing, Typography } from "../shared/mod.slint";
+
+// Sessions page placeholder
+// This will be replaced with actual session list implementation
+export component SessionsPage inherits Rectangle {
+    background: Theme.background;
+
+    VerticalLayout {
+        alignment: center;
+
+        Text {
+            text: "Sessions Page";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-xl;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "Session list will be implemented here";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-base;
+            horizontal-alignment: center;
+        }
+    }
+}

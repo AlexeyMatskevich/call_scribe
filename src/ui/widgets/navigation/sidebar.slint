@@ -1,0 +1,46 @@
+import { Theme, Spacing } from "../../shared/mod.slint";
+import { SidebarLogo, SidebarNavigation } from "components/mod.slint";
+
+// Main sidebar navigation component
+// Supports collapsed state for tablet view (icons only, 64px width)
+export component Sidebar inherits Rectangle {
+    // Currently active navigation item (for visual state only)
+    in property <int> active-index: 0;
+    // Collapsed state for responsive layout
+    in property <bool> is-collapsed: false;
+
+    // Navigation callback
+    callback navigate(int);
+
+    // Width is controlled by parent (MainWindow) to avoid binding loops
+    // Default width for standalone usage
+    width: is-collapsed ? Spacing.sidebar-width-collapsed : Spacing.sidebar-width;
+    background: Theme.sidebar-background;
+
+    // Right border
+    Rectangle {
+        x: parent.width - 1px;
+        width: 1px;
+        height: 100%;
+        background: Theme.border;
+    }
+
+    // Logo section at top
+    SidebarLogo {
+        x: 0;
+        y: 0;
+        width: 100%;
+        is-collapsed: root.is-collapsed;
+    }
+
+    // Navigation section - positioned below header
+    SidebarNavigation {
+        x: 0;
+        y: Spacing.header-height;
+        width: 100%;
+        height: parent.height - Spacing.header-height;
+        active-index: root.active-index;
+        is-collapsed: root.is-collapsed;
+        navigate(index) => { root.navigate(index); }
+    }
+}

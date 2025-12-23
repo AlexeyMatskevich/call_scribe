@@ -1,0 +1,8 @@
+// CallScribe Application Entry Point
+// This is the main .slint file compiled by build.rs
+
+// Re-export MainWindow for Rust consumption
+export { MainWindow } from "app/main_window.slint";
+
+// Re-export globals for Rust access if needed
+export { Theme, Spacing, Typography } from "shared/tokens.slint";

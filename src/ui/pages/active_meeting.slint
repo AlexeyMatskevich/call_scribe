@@ -1,0 +1,24 @@
+import { Theme, Spacing, Typography } from "../shared/mod.slint";
+
+// Active Meeting page placeholder
+export component ActiveMeetingPage inherits Rectangle {
+    background: Theme.background;
+
+    VerticalLayout {
+        alignment: center;
+
+        Text {
+            text: "Active Meeting Page";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-xl;
+            horizontal-alignment: center;
+        }
+
+        Text {
+            text: "Live recording interface will be implemented here";
+            color: Theme.text-dimmed;
+            font-size: Typography.size-base;
+            horizontal-alignment: center;
+        }
+    }
+}

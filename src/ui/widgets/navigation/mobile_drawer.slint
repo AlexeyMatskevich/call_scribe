@@ -1,0 +1,59 @@
+import { Theme, Spacing, Overlay } from "../../shared/mod.slint";
+import { SidebarLogo, SidebarNavigation } from "components/mod.slint";
+
+// Mobile slide-out navigation drawer
+export component MobileDrawer inherits Rectangle {
+    in property <bool> is-open: false;
+    in property <int> active-index: 0;
+
+    callback close-requested();
+    callback navigate(int);
+
+    // Full screen overlay
+    width: 100%;
+    height: 100%;
+
+    // Semi-transparent overlay (tap to close)
+    Overlay {
+        is-visible: is-open;
+        close-requested => { root.close-requested(); }
+    }
+
+    // Drawer panel (slides from left) - solid background, not transparent
+    Rectangle {
+        x: is-open ? 0 : -Spacing.sidebar-width;
+        y: 0;
+        width: Spacing.sidebar-width;
+        height: 100%;
+        background: #18181b;  // Solid dark background (not the 50% opacity sidebar-background)
+
+        animate x { duration: 200ms; easing: ease-out; }
+
+        // Right border
+        Rectangle {
+            x: parent.width - 1px;
+            width: 1px;
+            height: 100%;
+            background: Theme.border;
+        }
+
+        // Header with logo + close button
+        SidebarLogo {
+            x: 0;
+            y: 0;
+            width: 100%;
+            show-close-button: true;
+            close-clicked => { root.close-requested(); }
+        }
+
+        // Navigation section (includes Settings at bottom)
+        SidebarNavigation {
+            x: 0;
+            y: Spacing.header-height;
+            width: 100%;
+            height: parent.height - Spacing.header-height;
+            active-index: root.active-index;
+            navigate(index) => { root.navigate(index); }
+        }
+    }
+}

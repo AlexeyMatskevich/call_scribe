@@ -53,13 +53,45 @@ Two MCP servers are configured:
 
 The `scripts/rustup` shim exists because Serena expects `rustup which rust-analyzer` — it redirects to the nix-provided rust-analyzer.
 
+### Direnv (NixOS and macOS)
+
+This repo includes `.envrc` with `use flake` so direnv can load the dev shell automatically (including from Zed when `load_direnv` is enabled).
+
+NixOS:
+```bash
+nix profile install nixpkgs#direnv nixpkgs#nix-direnv
+```
+
+macOS:
+```bash
+brew install direnv
+nix profile install nixpkgs#nix-direnv
+```
+
+Then run:
+```bash
+direnv allow
+```
+
 ## Architecture
 
 ```
 src/
-├── main.rs          # Entry point, creates and runs HelloWorld window
+├── main.rs              # Entry point, creates and runs MainWindow
 └── ui/
-    └── hello.slint  # Slint UI definition (compiled at build time)
+    ├── app.slint        # UI entry point (exports MainWindow)
+    ├── app/             # Application shell
+    │   ├── main_window.slint   # Responsive layout (sidebar + content + drawer)
+    │   └── main_content.slint  # Header + page routing
+    ├── pages/           # Page components (sessions, settings, etc.)
+    ├── shared/          # Reusable across app
+    │   ├── tokens.slint       # Theme, Spacing, Typography
+    │   ├── types.slint        # Data structures
+    │   └── components/        # Buttons, overlays, etc.
+    ├── widgets/         # Feature-specific widgets
+    │   ├── app_header/        # Header components
+    │   └── navigation/        # Sidebar, drawer, nav items
+    └── assets/icons/    # SVG icons
 
 build.rs             # Compiles .slint files via slint-build
 scripts/
@@ -71,12 +103,25 @@ scripts/
 
 ### Slint UI Build Process
 
-1. `build.rs` calls `slint_build::compile("src/ui/hello.slint")`
+1. `build.rs` calls `slint_build::compile("src/ui/app.slint")`
 2. This generates Rust code at compile time
 3. `slint::include_modules!()` in `main.rs` includes the generated code
-4. Components like `HelloWorld` become available as Rust structs
+4. `MainWindow` component becomes available as a Rust struct
 
 ## Key Dependencies
 
 - **slint** with `backend-winit` and `renderer-skia-opengl` features
 - Skia renderer requires `clang`, `python3`, `fontconfig`, `freetype` (provided by flake.nix)
+
+## Serena Memories
+
+When working with Slint UI, read the `slint-ui-patterns-pitfalls` memory using:
+```
+mcp__serena__read_memory("slint-ui-patterns-pitfalls")
+```
+
+This contains documented solutions for common Slint issues:
+- Vertical alignment (text appearing higher than icons)
+- Binding loop warnings in responsive layouts
+- SVG icon compatibility issues
+- Conditional rendering patterns
