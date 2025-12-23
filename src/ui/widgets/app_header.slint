@@ -1,0 +1,125 @@
+import { Theme, Spacing, Typography, UserAvatar } from "../shared/mod.slint";
+import { HamburgerButton, StartSessionButton } from "app_header/mod.slint";
+
+// Responsive header component for main content area
+// Adapts layout for desktop/tablet (full) and mobile (compact) views
+export component AppHeader inherits Rectangle {
+    in property <bool> is-mobile: false;
+    in property <string> title: "All Sessions";
+    in property <string> user-initials: "MK";
+
+    callback menu-clicked();
+    callback start-session-clicked();
+
+    height: is-mobile ? Spacing.mobile-header-height : Spacing.header-height;
+    background: Theme.header-background;
+
+    // Bottom border
+    Rectangle {
+        y: parent.height - 1px;
+        width: 100%;
+        height: 1px;
+        background: Theme.border;
+    }
+
+    // === MOBILE LAYOUT ===
+    if is-mobile: Rectangle {
+        width: 100%;
+        height: 100%;
+
+        // Left side: Hamburger button + Page title
+        Rectangle {
+            x: Spacing.md;
+            y: 0;
+            height: 100%;
+
+            HamburgerButton {
+                x: 0;
+                y: (parent.height - self.height) / 2;
+                clicked => { root.menu-clicked(); }
+            }
+
+            // Page title
+            Text {
+                x: 36px + Spacing.md;
+                y: (parent.height - self.height) / 2 + 1px;
+                text: root.title;
+                color: Theme.text-secondary;
+                font-size: Typography.size-xl;
+                font-weight: Typography.weight-medium;
+            }
+        }
+
+        // Right side: Start Session button (compact) + Avatar
+        Rectangle {
+            x: parent.width - self.width - Spacing.md;
+            y: 0;
+            width: 40px + Spacing.sm + 32px;
+            height: 100%;
+
+            StartSessionButton {
+                x: 0;
+                y: (parent.height - self.height) / 2;
+                is-compact: true;
+                clicked => { root.start-session-clicked(); }
+            }
+
+            UserAvatar {
+                x: 40px + Spacing.sm;
+                y: (parent.height - self.height) / 2;
+                initials: root.user-initials;
+            }
+        }
+    }
+
+    // === DESKTOP/TABLET LAYOUT ===
+    if !is-mobile: HorizontalLayout {
+        padding-left: Spacing.xl;
+        padding-right: Spacing.xl;
+        alignment: space-between;
+
+        // Left side: Page title
+        Text {
+            text: root.title;
+            color: Theme.text-secondary;
+            font-size: Typography.size-xl;
+            font-weight: Typography.weight-medium;
+            vertical-alignment: center;
+        }
+
+        // Right side: Actions
+        Rectangle {
+            horizontal-stretch: 0;
+
+            HorizontalLayout {
+                spacing: Spacing.md;
+                alignment: center;
+
+                // Start Session button wrapper for vertical centering
+                Rectangle {
+                    width: 140px;
+                    height: root.height;
+
+                    StartSessionButton {
+                        x: 0;
+                        y: (parent.height - self.height) / 2;
+                        is-compact: false;
+                        clicked => { root.start-session-clicked(); }
+                    }
+                }
+
+                // User avatar wrapper for vertical centering
+                Rectangle {
+                    width: 32px;
+                    height: root.height;
+
+                    UserAvatar {
+                        x: 0;
+                        y: (parent.height - self.height) / 2;
+                        initials: root.user-initials;
+                    }
+                }
+            }
+        }
+    }
+}

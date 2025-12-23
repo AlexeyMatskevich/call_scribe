@@ -1,0 +1,66 @@
+import { Theme, Spacing, Typography, NavItemData } from "../../../shared/mod.slint";
+import { NavItem } from "nav_item.slint";
+
+// Sidebar navigation component with main nav items and settings
+// Handles positioning: main items at top, settings at absolute bottom
+export component SidebarNavigation inherits Rectangle {
+    in property <int> active-index: 0;
+    in property <bool> is-collapsed: false;
+
+    callback navigate(int);
+
+    // Navigation items data
+    property <[NavItemData]> main-items: [
+        { icon: @image-url("../../../assets/icons/sessions.svg"), text: "Sessions" },
+        { icon: @image-url("../../../assets/icons/active-meeting.svg"), text: "Active Meeting" },
+        { icon: @image-url("../../../assets/icons/voice-library.svg"), text: "Voice Library" },
+    ];
+
+    property <[NavItemData]> bottom-items: [
+        { icon: @image-url("../../../assets/icons/settings.svg"), text: "Settings" },
+    ];
+
+    // Main navigation section - positioned at top
+    Rectangle {
+        x: 0;
+        y: 0;
+        width: 100%;
+        height: parent.height - Spacing.nav-item-height - Spacing.lg - Spacing.sm;
+
+        VerticalLayout {
+            padding: Spacing.sm;
+            padding-top: Spacing.lg;
+            spacing: Spacing.xs;
+            alignment: start;
+
+            for item[index] in main-items: NavItem {
+                active: active-index == index;
+                icon: item.icon;
+                text: item.text;
+                is-collapsed: root.is-collapsed;
+                clicked => { root.navigate(index); }
+            }
+        }
+    }
+
+    // Settings at absolute bottom
+    Rectangle {
+        x: 0;
+        y: parent.height - Spacing.nav-item-height - Spacing.lg;
+        width: 100%;
+        height: Spacing.nav-item-height + Spacing.lg;
+
+        VerticalLayout {
+            padding: Spacing.sm;
+            alignment: end;
+
+            for item[index] in bottom-items: NavItem {
+                active: active-index == main-items.length + index;
+                icon: item.icon;
+                text: item.text;
+                is-collapsed: root.is-collapsed;
+                clicked => { root.navigate(main-items.length + index); }
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+import { Theme, Spacing, Typography, AppLogo, CloseButton } from "../../../shared/mod.slint";
+
+// Sidebar logo component with app icon and name
+// Supports collapsed state where only the icon is shown (centered)
+// Supports optional close button for drawer usage
+export component SidebarLogo inherits Rectangle {
+    in property <bool> is-collapsed: false;
+    in property <bool> show-close-button: false;
+
+    callback close-clicked();
+
+    height: Spacing.header-height;
+
+    // Bottom border
+    Rectangle {
+        y: parent.height - 1px;
+        width: 100%;
+        height: 1px;
+        background: Theme.border;
+    }
+
+    // Logo icon - centered when collapsed, left-aligned when expanded
+    AppLogo {
+        x: is-collapsed ? (parent.width - 32px) / 2 : Spacing.xl;
+        y: (parent.height - 32px) / 2;
+    }
+
+    // App name - only visible when expanded
+    if !is-collapsed: Text {
+        x: Spacing.xl + 32px + Spacing.md;
+        y: (parent.height - self.height) / 2 + 2px;
+        text: "CallScribe";
+        color: Theme.text-primary;
+        font-size: Typography.size-xl;
+        font-weight: Typography.weight-semibold;
+    }
+
+    // Close button (X) - only visible when show-close-button is true
+    if show-close-button: CloseButton {
+        x: parent.width - 36px - Spacing.md;
+        y: (parent.height - 36px) / 2;
+        clicked => { root.close-clicked(); }
+    }
+}

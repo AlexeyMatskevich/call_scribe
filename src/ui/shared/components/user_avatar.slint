@@ -1,0 +1,21 @@
+import { Theme, Spacing, Typography } from "../tokens.slint";
+
+// User avatar component with initials
+// Reusable across the app for user representation
+export component UserAvatar inherits Rectangle {
+    in property <string> initials: "MK";
+    in property <length> size: 32px;
+
+    width: size;
+    height: size;
+    border-radius: size / 2;
+    background: Theme.avatar-background;
+
+    Text {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2 + 1px;
+        text: initials;
+        color: Theme.text-muted;
+        font-size: Typography.size-sm;
+    }
+}

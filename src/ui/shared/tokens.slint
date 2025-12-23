@@ -1,0 +1,82 @@
+// Design tokens extracted from Figma design
+// Color palette and spacing constants for CallScribe
+
+export global Theme {
+    // Background colors
+    out property <color> background: #09090b;
+    out property <color> sidebar-background: #18181b80;  // 50% opacity
+    out property <color> header-background: #18181b33;   // 20% opacity
+    out property <color> card-background: #18181b33;     // 20% opacity
+
+    // Border colors
+    out property <color> border: #27272a;
+    out property <color> border-subtle: #27272a80;       // 50% opacity
+
+    // Accent colors
+    out property <color> primary: #615fff;
+    out property <color> button-primary: #4f39f6;
+    out property <color> button-primary-hover: #5d4af7;
+    out property <color> button-primary-pressed: #4535c4;
+
+    // Text colors
+    out property <color> text-primary: #f4f4f5;
+    out property <color> text-secondary: #e4e4e7;
+    out property <color> text-muted: #9f9fa9;
+    out property <color> text-dimmed: #71717b;
+    out property <color> text-placeholder: #52525c;
+
+    // Navigation colors
+    out property <color> nav-active-background: #27272a;
+    out property <color> nav-indicator: #615fff;
+
+    // Input colors
+    out property <color> input-background: #18181b;
+    out property <color> input-border: #27272a;
+
+    // Misc
+    out property <color> separator: #3f3f47;
+    out property <color> avatar-background: #27272a;
+}
+
+export global Spacing {
+    // Base spacing unit
+    out property <length> xs: 4px;
+    out property <length> sm: 8px;
+    out property <length> md: 12px;
+    out property <length> lg: 16px;
+    out property <length> xl: 24px;
+    out property <length> xxl: 32px;
+
+    // Responsive breakpoints
+    out property <length> breakpoint-tablet: 900px;
+    out property <length> breakpoint-mobile: 600px;
+
+    // Component-specific
+    out property <length> sidebar-width: 256px;
+    out property <length> sidebar-width-collapsed: 64px;
+    out property <length> header-height: 64px;
+    out property <length> mobile-header-height: 48px;
+    out property <length> nav-item-height: 40px;
+    out property <length> button-height: 40px;
+    out property <length> input-height: 46px;
+    out property <length> icon-size: 20px;
+    out property <length> icon-size-sm: 16px;
+    out property <length> border-radius: 8px;
+    out property <length> border-radius-lg: 10px;
+    out property <length> border-radius-xl: 14px;
+}
+
+export global Typography {
+    // Font weights (Inter font)
+    out property <int> weight-regular: 400;
+    out property <int> weight-medium: 500;
+    out property <int> weight-semibold: 600;
+    out property <int> weight-bold: 700;
+
+    // Font sizes
+    out property <length> size-xs: 10px;
+    out property <length> size-sm: 12px;
+    out property <length> size-base: 14px;
+    out property <length> size-lg: 16px;
+    out property <length> size-xl: 18px;
+}

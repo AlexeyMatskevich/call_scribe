@@ -1,0 +1,60 @@
+import { Theme } from "../shared/mod.slint";
+import { AppHeader } from "../widgets/mod.slint";
+import { SessionsPage } from "../pages/sessions.slint";
+import { ActiveMeetingPage } from "../pages/active_meeting.slint";
+import { VoiceLibraryPage } from "../pages/voice_library.slint";
+import { SettingsPage } from "../pages/settings.slint";
+
+// Main content area with header and page routing
+// Handles which page is visible based on current-page index
+export component MainContent inherits Rectangle {
+    in property <int> current-page: 0;
+    in property <bool> is-mobile: false;
+
+    callback menu-clicked();
+
+    // Page titles for header
+    property <[string]> page-titles: ["All Sessions", "Active Meeting", "Voice Library", "Settings"];
+
+    background: Theme.background;
+
+    VerticalLayout {
+        // Responsive header (adapts to mobile/desktop)
+        AppHeader {
+            is-mobile: root.is-mobile;
+            title: page-titles[current-page];
+            menu-clicked => { root.menu-clicked(); }
+        }
+
+        // Content area - fills remaining space
+        Rectangle {
+            vertical-stretch: 1;
+            background: Theme.background;
+
+            // Show page based on current-page index
+            SessionsPage {
+                visible: current-page == 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            ActiveMeetingPage {
+                visible: current-page == 1;
+                width: 100%;
+                height: 100%;
+            }
+
+            VoiceLibraryPage {
+                visible: current-page == 2;
+                width: 100%;
+                height: 100%;
+            }
+
+            SettingsPage {
+                visible: current-page == 3;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

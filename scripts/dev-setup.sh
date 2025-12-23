@@ -27,6 +27,7 @@ if [ ! -f .zed/settings.json ] || [ "$current_hash" != "$stored_hash" ]; then
   mkdir -p .zed
   cat > .zed/settings.json << EOF
 {
+  "load_direnv": "shell_hook",
   "lsp": {
     "rust-analyzer": {
       "binary": {

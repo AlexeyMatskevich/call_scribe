@@ -1,0 +1,86 @@
+import { Theme, Spacing, Typography } from "../../../shared/tokens.slint";
+
+// Navigation item component for sidebar
+// Shows icon + text with active state indicator
+// Supports collapsed state for tablet view (icon only, centered)
+export component NavItem inherits Rectangle {
+    in property <bool> active: false;
+    in property <image> icon;
+    in property <string> text;
+    in property <bool> is-collapsed: false;
+
+    callback clicked();
+
+    // Accessibility (for screen readers)
+    accessible-role: button;
+    accessible-label: text;
+    accessible-action-default => { root.clicked(); }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    height: Spacing.nav-item-height;
+    border-radius: Spacing.border-radius;
+
+    // Dynamic background: active > pressed > hover > transparent
+    background: active ? Theme.nav-active-background
+              : touch.pressed ? Theme.input-border
+              : touch.has-hover ? Theme.nav-active-background
+              : transparent;
+    animate background { duration: 150ms; }
+
+    // Focus ring (only when not active, since active has its own indicator)
+    border-width: focus-scope.has-focus && !active ? 2px : 0px;
+    border-color: Theme.primary;
+    animate border-width { duration: 150ms; }
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    // Click handler for navigation
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+
+    // Active indicator bar (left side) - visible in both states
+    Rectangle {
+        x: 0;
+        y: (parent.height - self.height) / 2;
+        width: 4px;
+        height: 24px;
+        border-radius: 8px;
+        background: Theme.nav-indicator;
+        visible: active;
+    }
+
+    // Icon - centered when collapsed, left-aligned when expanded
+    Image {
+        x: is-collapsed
+            ? (root.width - Spacing.icon-size) / 2
+            : Spacing.md;
+        y: (root.height - Spacing.icon-size) / 2;
+        width: Spacing.icon-size;
+        height: Spacing.icon-size;
+        source: icon;
+        colorize: active ? white : Theme.text-muted;
+        image-fit: contain;
+    }
+
+    // Text label - only visible when expanded
+    if !is-collapsed: Text {
+        x: Spacing.md + Spacing.icon-size + Spacing.md;
+        y: (root.height - self.height) / 2 + 1px;
+        text: root.text;
+        color: active ? white : Theme.text-muted;
+        font-size: Typography.size-base;
+        font-weight: Typography.weight-medium;
+    }
+}

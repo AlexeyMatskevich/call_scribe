@@ -13,18 +13,30 @@ Call Scribe is a Rust desktop application for call transcription/note-taking (in
 ```
 call_scribe/
 ├── src/
-│   ├── main.rs           # Application entry point
+│   ├── main.rs              # Entry point, runs MainWindow
 │   └── ui/
-│       └── hello.slint   # Slint UI definitions
-├── build.rs              # Slint compilation build script
+│       ├── app.slint        # UI entry point (exports MainWindow)
+│       ├── app/             # Application shell
+│       │   ├── main_window.slint   # Responsive layout
+│       │   └── main_content.slint  # Header + page routing
+│       ├── pages/           # Sessions, Settings, etc.
+│       ├── shared/          # Reusable components
+│       │   ├── tokens.slint       # Theme, Spacing, Typography
+│       │   ├── types.slint        # Data structures (NavItemData)
+│       │   └── components/        # Buttons, overlays, etc.
+│       ├── widgets/         # Feature-specific widgets
+│       │   ├── app_header/        # Header components
+│       │   └── navigation/        # Sidebar, drawer
+│       └── assets/icons/    # SVG icons
+├── build.rs              # Slint compilation (compiles app.slint)
 ├── Cargo.toml            # Rust dependencies
 ├── flake.nix             # Nix development environment
 ├── CLAUDE.md             # Instructions for Claude Code agent
 ├── scripts/
 │   ├── dev-setup.sh      # Auto-generates configs on nix develop
 │   ├── serena-mcp        # Generated wrapper for Serena MCP
-│   ├── context7-mcp      # Wrapper for Context7 MCP (fetches API key from rbw)
-│   ├── github-mcp        # Wrapper for GitHub MCP (fetches token from rbw)
+│   ├── context7-mcp      # Wrapper for Context7 MCP
+│   ├── github-mcp        # Wrapper for GitHub MCP
 │   └── rustup            # Shim for NixOS compatibility
 └── .mcp.json             # MCP servers configuration (generated)
 ```
@@ -40,3 +52,6 @@ call_scribe/
 ## Key Dependencies
 - `slint` - UI framework with backend-winit and renderer-skia-opengl features
 - `slint-build` - Build-time compilation of .slint files
+
+## Related Memories
+- **slint-ui-patterns-pitfalls** - Read when working with Slint UI (alignment issues, binding loops, SVG icons, responsive patterns)

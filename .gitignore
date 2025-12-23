@@ -1,5 +1,6 @@
 /target
 .zed/
+.direnv/
 .mcp.json
 serena_config.yml
 .venv/

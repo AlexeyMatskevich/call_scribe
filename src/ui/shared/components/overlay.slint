@@ -1,0 +1,21 @@
+import { Theme } from "../tokens.slint";
+
+// Reusable overlay backdrop for modals, drawers, dialogs
+// Provides semi-transparent background with tap-to-close functionality
+export component Overlay inherits Rectangle {
+    in property <bool> is-visible: false;
+
+    callback close-requested();
+
+    width: 100%;
+    height: 100%;
+    background: is-visible ? #00000080 : transparent;
+    opacity: is-visible ? 1.0 : 0.0;
+
+    animate opacity { duration: 200ms; easing: ease-out; }
+
+    TouchArea {
+        enabled: is-visible;
+        clicked => { root.close-requested(); }
+    }
+}
