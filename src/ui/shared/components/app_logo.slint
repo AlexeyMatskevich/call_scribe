@@ -13,7 +13,7 @@ export component AppLogo inherits Rectangle {
     // Shadow
     drop-shadow-blur: 15px;
     drop-shadow-offset-y: 10px;
-    drop-shadow-color: #615fff33;
+    drop-shadow-color: Theme.shadow-accent;
 
     Image {
         width: 18px;
@@ -21,7 +21,7 @@ export component AppLogo inherits Rectangle {
         x: (parent.width - self.width) / 2;
         y: (parent.height - self.height) / 2;
         source: @image-url("../../assets/icons/logo-mic.svg");
-        colorize: white;
+        colorize: Theme.text-inverse;
         image-fit: contain;
     }
 }

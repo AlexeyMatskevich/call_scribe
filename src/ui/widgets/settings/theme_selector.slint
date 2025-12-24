@@ -1,0 +1,49 @@
+import { Theme, Spacing, Typography } from "../../shared/tokens.slint";
+import { ThemeOptionCard } from "theme_option_card.slint";
+
+// Theme selector with Dark/Light options
+export component ThemeSelector inherits Rectangle {
+    in-out property <bool> is-dark-theme: true;
+
+    callback theme-changed(bool);  // true = dark theme
+
+    HorizontalLayout {
+        spacing: Spacing.lg;
+        alignment: start;
+
+        // Dark theme option
+        // Note: Theme.background is very dark, so we need high brighter() values
+        ThemeOptionCard {
+            icon: @image-url("../../assets/icons/moon.svg");
+            label: "Dark";
+            selected: root.is-dark-theme;
+            card-background: Theme.background;
+            text-color: Theme.text-light;
+            hover-darken: -0.6;  // High value needed for very dark backgrounds
+            clicked => {
+                if (!root.is-dark-theme) {
+                    root.is-dark-theme = true;
+                    root.theme-changed(true);
+                }
+            }
+        }
+
+        // Light theme option
+        ThemeOptionCard {
+            icon: @image-url("../../assets/icons/sun.svg");
+            label: "Light";
+            selected: !root.is-dark-theme;
+            card-background: Theme.text-inverse;
+            text-color: Theme.text-on-light;
+            icon-color: Theme.icon-sun;
+            focus-ring-color: Theme.text-on-light;
+            hover-darken: 0.12;  // 12% darker on hover for light backgrounds
+            clicked => {
+                if (root.is-dark-theme) {
+                    root.is-dark-theme = false;
+                    root.theme-changed(false);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,87 @@
+import { Theme, Spacing, Typography } from "../../tokens.slint";
+
+// Light button (white background with dark text), icon + optional text
+export component LightButton inherits Rectangle {
+    in property <string> text;
+    in property <image> icon;
+    in property <bool> compact: false;
+
+    callback clicked();
+
+    // Accessibility
+    accessible-role: button;
+    accessible-label: text;
+    accessible-action-default => {
+        root.clicked();
+    }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    property <color> base-color: Theme.text-inverse;
+
+    border-radius: Spacing.border-radius;
+
+    // Dynamic background using color.darker() for maintainable hover states
+    background: touch.pressed ? base-color.darker(0.35)
+        : touch.has-hover ? base-color.darker(0.20)
+        : base-color;
+    animate background { duration: 150ms; }
+
+    // Focus ring
+    border-width: focus-scope.has-focus ? 2px : 0px;
+    border-color: Theme.primary;
+    animate border-width { duration: 150ms; }
+
+    text-element := Text {
+        visible: !compact;
+        x: 12px + Spacing.icon-size-sm + Spacing.sm;
+        y: (parent.height - self.height) / 2 + 1px;
+        text: root.text;
+        color: Theme.text-on-light;
+        font-size: Typography.size-base;
+        font-weight: Typography.weight-medium;
+        wrap: word-wrap;
+        horizontal-alignment: left;
+    }
+
+    property <length> content-height: text-element.preferred-height + Spacing.sm * 2;
+
+    width: compact
+        ? Spacing.button-height-sm
+        : 12px + Spacing.icon-size-sm + Spacing.sm + text-element.preferred-width + 12px;
+    height: compact ? Spacing.button-height-sm
+        : (content-height < Spacing.button-height-sm ? Spacing.button-height-sm : content-height);
+
+    // Icon - centered on compact, left-aligned otherwise
+    Image {
+        x: compact ? (parent.width - Spacing.icon-size-sm) / 2 : 12px;
+        y: (parent.height - Spacing.icon-size-sm) / 2;
+        width: Spacing.icon-size-sm;
+        height: Spacing.icon-size-sm;
+        source: root.icon;
+        colorize: Theme.text-on-light;
+        accessible-role: none;
+    }
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        width: 100%;
+        height: 100%;
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        clicked => {
+            root.clicked();
+        }
+    }
+}

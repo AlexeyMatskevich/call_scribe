@@ -16,7 +16,9 @@ export component MobileDrawer inherits Rectangle {
     // Semi-transparent overlay (tap to close)
     Overlay {
         is-visible: is-open;
-        close-requested => { root.close-requested(); }
+        close-requested => {
+            root.close-requested();
+        }
     }
 
     // Drawer panel (slides from left) - solid background, not transparent
@@ -25,9 +27,12 @@ export component MobileDrawer inherits Rectangle {
         y: 0;
         width: Spacing.sidebar-width;
         height: 100%;
-        background: #18181b;  // Solid dark background (not the 50% opacity sidebar-background)
+        background: Theme.surface-solid;
 
-        animate x { duration: 200ms; easing: ease-out; }
+        animate x {
+            duration: 200ms;
+            easing: ease-out;
+        }
 
         // Right border
         Rectangle {
@@ -43,7 +48,9 @@ export component MobileDrawer inherits Rectangle {
             y: 0;
             width: 100%;
             show-close-button: true;
-            close-clicked => { root.close-requested(); }
+            close-clicked => {
+                root.close-requested();
+            }
         }
 
         // Navigation section (includes Settings at bottom)
@@ -53,7 +60,9 @@ export component MobileDrawer inherits Rectangle {
             width: 100%;
             height: parent.height - Spacing.header-height;
             active-index: root.active-index;
-            navigate(index) => { root.navigate(index); }
+            navigate(index) => {
+                root.navigate(index);
+            }
         }
     }
 }

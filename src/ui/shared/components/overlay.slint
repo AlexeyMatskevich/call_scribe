@@ -7,15 +7,27 @@ export component Overlay inherits Rectangle {
 
     callback close-requested();
 
+    // Accessibility - overlay acts as a dismiss button for screen readers
+    accessible-role: button;
+    accessible-label: "Close";
+    accessible-action-default => {
+        root.close-requested();
+    }
+
     width: 100%;
     height: 100%;
-    background: is-visible ? #00000080 : transparent;
+    background: is-visible ? Theme.overlay : transparent;
     opacity: is-visible ? 1.0 : 0.0;
 
-    animate opacity { duration: 200ms; easing: ease-out; }
+    animate opacity {
+        duration: 200ms;
+        easing: ease-out;
+    }
 
     TouchArea {
         enabled: is-visible;
-        clicked => { root.close-requested(); }
+        clicked => {
+            root.close-requested();
+        }
     }
 }

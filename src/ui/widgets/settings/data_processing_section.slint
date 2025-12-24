@@ -1,0 +1,30 @@
+import { Theme, Spacing, Typography } from "../../shared/mod.slint";
+import {
+    SecondaryButton,
+    SettingsCard,
+    SettingsSection,
+} from "../../shared/components/mod.slint";
+
+// Data & Processing settings section
+export component DataProcessingSection inherits SettingsSection {
+    in property <bool> is-mobile: false;
+
+    callback configure-reprocessing();
+
+    icon: @image-url("../../assets/icons/database.svg");
+    title: "Data & Processing";
+
+    SettingsCard {
+        icon: @image-url("../../assets/icons/cpu.svg");
+        title: "Reprocessing";
+        description: "Reprocess transcripts to generate new summaries using the latest AI model version. Use this if you've updated your AI settings or want to refresh old summaries.";
+        is-mobile: root.is-mobile;
+
+        SecondaryButton {
+            text: "Configure Reprocessing Job...";
+            clicked => {
+                root.configure-reprocessing();
+            }
+        }
+    }
+}

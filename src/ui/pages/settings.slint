@@ -1,24 +1,100 @@
 import { Theme, Spacing, Typography } from "../shared/mod.slint";
+import { SettingsState } from "../shared/types.slint";
+import {
+    SettingsHeader,
+    DataProcessingSection,
+    AiIntelligenceSection,
+    AudioRecordingSection,
+    SystemSection,
+    AppearanceSection,
+} from "../widgets/mod.slint";
 
-// Settings page placeholder
+// Settings page with all configuration options
 export component SettingsPage inherits Rectangle {
+    in property <bool> is-mobile: false;
+    in property <bool> is-tablet: false;
+    in property <bool> is-desktop: true;
+
+    property <length> base-padding: root.is-mobile
+        ? Spacing.lg
+        : (root.is-tablet ? Spacing.xl : Spacing.xxl);
+
+    in-out property <SettingsState> settings-state: {
+        ai-enabled: true,
+        save-audio: false,
+        background-operation: true,
+        dark-theme: true,
+    };
+
+    callback save-settings();
+    callback open-mcp-docs();
+
     background: Theme.background;
+    clip: true;
 
-    VerticalLayout {
-        alignment: center;
+    Flickable {
+        width: 100%;
+        height: 100%;
+        viewport-width: self.width;
+        viewport-height: content-wrapper.height;
 
-        Text {
-            text: "Settings Page";
-            color: Theme.text-dimmed;
-            font-size: Typography.size-xl;
-            horizontal-alignment: center;
-        }
+        content-wrapper := Rectangle {
+            width: root.is-desktop && root.width > Spacing.settings-page-max-width-desktop
+                ? Spacing.settings-page-max-width-desktop
+                : root.width;
+            height: content-layout.preferred-height + root.base-padding + root.base-padding;
+            x: root.is-desktop ? (root.width - self.width) / 2 : 0;
 
-        Text {
-            text: "App settings and preferences will be implemented here";
-            color: Theme.text-dimmed;
-            font-size: Typography.size-base;
-            horizontal-alignment: center;
+            content-layout := VerticalLayout {
+                padding: root.base-padding;
+                spacing: root.is-mobile ? Spacing.lg : Spacing.xxl;
+
+                SettingsHeader {
+                    is-mobile: root.is-mobile;
+                    save-clicked => {
+                        root.save-settings();
+                    }
+                }
+
+                DataProcessingSection {
+                    is-mobile: root.is-mobile;
+                    configure-reprocessing => {
+                        // TODO: Open reprocessing dialog
+                    }
+                }
+
+                AiIntelligenceSection {
+                    is-mobile: root.is-mobile;
+                    ai-enabled: root.settings-state.ai-enabled;
+                    ai-enabled-changed(value) => {
+                        root.settings-state.ai-enabled = value;
+                    }
+                    open-mcp-docs => {
+                        root.open-mcp-docs();
+                    }
+                }
+
+                AudioRecordingSection {
+                    save-audio: root.settings-state.save-audio;
+                    save-audio-changed(value) => {
+                        root.settings-state.save-audio = value;
+                    }
+                }
+
+                SystemSection {
+                    background-operation: root.settings-state.background-operation;
+                    background-operation-changed(value) => {
+                        root.settings-state.background-operation = value;
+                    }
+                }
+
+                AppearanceSection {
+                    dark-theme: root.settings-state.dark-theme;
+                    dark-theme-changed(value) => {
+                        root.settings-state.dark-theme = value;
+                    }
+                }
+            }
         }
     }
 }

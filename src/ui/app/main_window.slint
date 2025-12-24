@@ -26,9 +26,7 @@ export component MainWindow inherits Window {
     property <bool> is-sidebar-collapsed: is-tablet;
 
     // Computed sidebar width based on responsive state
-    property <length> current-sidebar-width: is-mobile
-        ? 0px
-        : (is-sidebar-collapsed ? Spacing.sidebar-width-collapsed : Spacing.sidebar-width);
+    property <length> current-sidebar-width: is-mobile ? 0px : (is-sidebar-collapsed ? Spacing.sidebar-width-collapsed : Spacing.sidebar-width);
 
     // Mobile drawer state
     property <bool> is-drawer-open: false;
@@ -42,7 +40,9 @@ export component MainWindow inherits Window {
         active-index: current-page;
         is-collapsed: is-sidebar-collapsed;
 
-        navigate(index) => { current-page = index; }
+        navigate(index) => {
+            current-page = index;
+        }
     }
 
     // Main content area (header + page routing)
@@ -53,7 +53,11 @@ export component MainWindow inherits Window {
         height: root.height;
         current-page: root.current-page;
         is-mobile: root.is-mobile;
-        menu-clicked => { is-drawer-open = true; }
+        is-tablet: root.is-tablet;
+        is-desktop: root.is-desktop;
+        menu-clicked => {
+            is-drawer-open = true;
+        }
     }
 
     // Mobile: Drawer overlay (must be last to render on top)
@@ -65,7 +69,9 @@ export component MainWindow inherits Window {
         is-open: is-drawer-open;
         active-index: current-page;
 
-        close-requested => { is-drawer-open = false; }
+        close-requested => {
+            is-drawer-open = false;
+        }
         navigate(index) => {
             current-page = index;
             is-drawer-open = false;

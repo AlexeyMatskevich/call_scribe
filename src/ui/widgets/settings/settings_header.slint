@@ -1,0 +1,37 @@
+import { Theme, Spacing, Typography } from "../../shared/tokens.slint";
+import { LightButton } from "../../shared/components/mod.slint";
+
+// Settings page header with title and Save Changes button
+export component SettingsHeader inherits Rectangle {
+    in property <bool> is-mobile: false;
+
+    callback save-clicked();
+
+    height: header-layout.preferred-height < 36px ? 36px : header-layout.preferred-height;
+
+    header-layout := HorizontalLayout {
+        alignment: space-between;
+
+        // Page title
+        Text {
+            text: "Settings";
+            color: Theme.text-primary;
+            font-size: 30px;
+            font-weight: Typography.weight-bold;
+            vertical-alignment: center;
+            wrap: word-wrap;
+            horizontal-alignment: left;
+        }
+
+        // Save Changes button - white background with dark text
+        // From Figma: bg #fafafa, radius 8px, icon 16px at left:12px top:10px
+        LightButton {
+            compact: root.is-mobile;
+            text: "Save Changes";
+            icon: @image-url("../../assets/icons/save.svg");
+            clicked => {
+                root.save-clicked();
+            }
+        }
+    }
+}

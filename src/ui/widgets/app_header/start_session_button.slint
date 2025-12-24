@@ -1,4 +1,4 @@
-import { Theme, Spacing, PrimaryButton } from "../../shared/mod.slint";
+import { Spacing, PrimaryButton } from "../../shared/mod.slint";
 
 // Start Session button with compact (icon-only) and full modes
 export component StartSessionButton inherits Rectangle {
@@ -6,41 +6,19 @@ export component StartSessionButton inherits Rectangle {
 
     callback clicked();
 
-    width: is-compact ? 40px : 140px;
+    width: is-compact ? 40px
+        : (button.preferred-width < 140px ? 140px : button.preferred-width);
     height: is-compact ? 32px : 36px;
 
-    // Compact mode: icon-only purple button (mobile)
-    if is-compact: Rectangle {
+    button := PrimaryButton {
         width: 100%;
         height: 100%;
-        border-radius: Spacing.border-radius;
-        background: Theme.button-primary;
-
-        drop-shadow-blur: 15px;
-        drop-shadow-offset-y: 10px;
-        drop-shadow-color: #312c8533;
-
-        Image {
-            x: (parent.width - Spacing.icon-size) / 2;
-            y: (parent.height - Spacing.icon-size) / 2;
-            width: Spacing.icon-size;
-            height: Spacing.icon-size;
-            source: @image-url("../../assets/icons/mic.svg");
-            colorize: white;
-            image-fit: contain;
-        }
-
-        TouchArea {
-            clicked => { root.clicked(); }
-        }
-    }
-
-    // Full mode: PrimaryButton with text and icon (desktop)
-    if !is-compact: PrimaryButton {
-        width: 100%;
-        text: "Start Session";
+        text: root.is-compact ? "" : "Start Session";
+        accessible-text: "Start Session";
         has-icon: true;
         icon: @image-url("../../assets/icons/mic.svg");
-        clicked => { root.clicked(); }
+        clicked => {
+            root.clicked();
+        }
     }
 }

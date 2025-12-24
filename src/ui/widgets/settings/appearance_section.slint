@@ -1,0 +1,20 @@
+import { Theme, Spacing, Typography } from "../../shared/mod.slint";
+import { SettingsSection } from "../../shared/components/mod.slint";
+import { ThemeSelector } from "theme_selector.slint";
+
+// Appearance settings section
+export component AppearanceSection inherits SettingsSection {
+    in property <bool> dark-theme: true;
+
+    callback dark-theme-changed(bool);
+
+    icon: @image-url("../../assets/icons/moon.svg");
+    title: "Appearance";
+
+    ThemeSelector {
+        is-dark-theme: root.dark-theme;
+        theme-changed(is-dark) => {
+            root.dark-theme-changed(is-dark);
+        }
+    }
+}
