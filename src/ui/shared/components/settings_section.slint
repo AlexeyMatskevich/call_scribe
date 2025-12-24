@@ -1,0 +1,57 @@
+import { Theme, Spacing, Typography } from "../tokens.slint";
+
+// Settings section with icon + title header and bottom border
+// Uses @children for content slot
+export component SettingsSection inherits Rectangle {
+    in property <image> icon;
+    in property <string> title;
+
+    VerticalLayout {
+        spacing: Spacing.xl;
+
+        // Section header with bottom border
+        header := Rectangle {
+            text-element := Text {
+                x: Spacing.icon-size + Spacing.sm;
+                y: (parent.height - self.height) / 2 + 2px;
+                width: parent.width - (Spacing.icon-size + Spacing.sm);
+                text: root.title;
+                color: Theme.text-primary;
+                font-size: Typography.size-xl;
+                font-weight: Typography.weight-semibold;
+                wrap: word-wrap;
+                horizontal-alignment: left;
+            }
+
+            property <length> content-height: (text-element.preferred-height + 4px) > Spacing.icon-size
+                ? (text-element.preferred-height + 4px)
+                : Spacing.icon-size;
+            height: content-height < 36px ? 36px : content-height;
+
+            Image {
+                x: 0;
+                y: (parent.height - Spacing.icon-size) / 2;
+                width: Spacing.icon-size;
+                height: Spacing.icon-size;
+                source: root.icon;
+                colorize: Theme.accent-purple;
+                accessible-role: none;
+            }
+
+            // Bottom border
+            Rectangle {
+                x: 0;
+                y: parent.height - 1px;
+                width: 100%;
+                height: 1px;
+                background: Theme.border;
+            }
+        }
+
+        // Content slot for section items
+        VerticalLayout {
+            spacing: Spacing.lg;
+            @children
+        }
+    }
+}

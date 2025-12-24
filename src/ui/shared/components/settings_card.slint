@@ -1,0 +1,65 @@
+import { Theme, Spacing, Typography } from "../tokens.slint";
+
+// Settings card with icon header, description, and action slot
+export component SettingsCard inherits Rectangle {
+    in property <image> icon;
+    in property <string> title;
+    in property <string> description;
+    in property <bool> is-mobile: false;
+
+    background: Theme.sidebar-background;
+    border-width: 1px;
+    border-color: Theme.border;
+    border-radius: Spacing.border-radius-xl;
+
+    VerticalLayout {
+        // Responsive padding: 16px on mobile, 24px on desktop
+        padding: root.is-mobile ? Spacing.lg : Spacing.xl;
+        spacing: root.is-mobile ? Spacing.md : Spacing.lg;
+
+        // Header with icon and title
+        header := Rectangle {
+            text-element := Text {
+                x: Spacing.icon-size-sm + Spacing.sm;
+                y: (parent.height - self.height) / 2 + 1px;
+                width: parent.width - (Spacing.icon-size-sm + Spacing.sm);
+                text: root.title;
+                color: Theme.text-primary;
+                font-size: Typography.size-lg;
+                font-weight: Typography.weight-medium;
+                wrap: word-wrap;
+                horizontal-alignment: left;
+            }
+
+            height: text-element.preferred-height > Spacing.icon-size-sm
+                ? text-element.preferred-height
+                : Spacing.icon-size-sm;
+
+            Image {
+                x: 0;
+                y: (parent.height - Spacing.icon-size-sm) / 2;
+                width: Spacing.icon-size-sm;
+                height: Spacing.icon-size-sm;
+                source: root.icon;
+                colorize: Theme.accent-purple;
+                accessible-role: none;
+            }
+        }
+
+        // Description
+        Text {
+            text: root.description;
+            color: Theme.text-muted;
+            font-size: Typography.size-lg;
+            font-weight: Typography.weight-regular;
+            wrap: word-wrap;
+            horizontal-alignment: left;
+        }
+
+        // Actions slot - pass buttons as children
+        HorizontalLayout {
+            alignment: start;
+            @children
+        }
+    }
+}

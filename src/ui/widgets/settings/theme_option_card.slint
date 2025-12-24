@@ -1,0 +1,117 @@
+import { Theme, Spacing, Typography } from "../../shared/tokens.slint";
+
+// Theme option card component for theme selection
+export component ThemeOptionCard inherits Rectangle {
+    in property <image> icon;
+    in property <string> label;
+    in property <bool> selected: false;
+    in property <color> card-background: Theme.background;
+    in property <color> text-color: Theme.text-secondary;
+    in property <color> icon-color: text-color;  // Defaults to text-color if not specified
+    in property <color> focus-ring-color: Theme.text-primary;  // Customizable focus ring color
+    in property <float> hover-darken: 0.1;  // How much to darken on hover (0.1 = 10%)
+
+    callback clicked();
+
+    // Accessibility
+    accessible-role: button;
+    accessible-label: label;
+    accessible-checked: selected;
+    accessible-action-default => {
+        root.clicked();
+    }
+
+    // Enable keyboard focus
+    forward-focus: focus-scope;
+
+    min-width: Spacing.settings-theme-option-min-width;
+    max-width: Spacing.settings-theme-option-max-width;
+    preferred-width: label-text.preferred-width + Spacing.sm * 2;
+    property <length> content-height: 16px + Spacing.sm + label-text.preferred-height + Spacing.sm * 2;
+    height: content-height < 80px ? 80px : content-height;
+    border-radius: Spacing.border-radius-lg;
+    clip: true;
+
+    // Selected state: purple border with glow
+    border-width: root.selected ? 2px : 1px;
+    border-color: root.selected ? Theme.primary : Theme.border;
+    animate border-width { duration: 150ms; }
+    animate border-color { duration: 150ms; }
+
+    // Glow effect when selected
+    drop-shadow-blur: root.selected ? 8px : 0px;
+    drop-shadow-color: root.selected ? Theme.shadow-accent : transparent;
+    animate drop-shadow-blur { duration: 150ms; }
+
+    // Card content
+    Rectangle {
+        x: root.selected ? 2px : 1px;
+        y: root.selected ? 2px : 1px;
+        width: parent.width - (root.selected ? 4px : 2px);
+        height: parent.height - (root.selected ? 4px : 2px);
+        border-radius: Spacing.border-radius;
+
+        // Dynamic background using darker()/brighter() for maintainable hover states
+        // Positive hover-darken = darker (for light backgrounds)
+        // Negative hover-darken = brighter (for dark backgrounds)
+        background: touch.pressed ? (hover-darken >= 0 ? root.card-background.darker(hover-darken * 2) : root.card-background.brighter(-hover-darken * 2)) : touch.has-hover ? (hover-darken >= 0 ? root.card-background.darker(hover-darken) : root.card-background.brighter(-hover-darken)) : root.card-background;
+        animate background { duration: 150ms; }
+
+        // Focus ring inside the card - use customizable color
+        border-width: focus-scope.has-focus ? 2px : 0px;
+        border-color: root.focus-ring-color;
+        animate border-width { duration: 150ms; }
+
+        // Icon - absolutely positioned for pixel-perfect centering
+        Image {
+            x: (parent.width - self.width) / 2;
+            y: (parent.height - (16px + Spacing.sm + label-text.preferred-height)) / 2;
+            width: 16px;
+            height: 16px;
+            source: root.icon;
+            colorize: root.icon-color;
+            accessible-role: none;
+        }
+
+        // Label - positioned below icon
+        label-text := Text {
+            x: Spacing.sm;
+            width: parent.width - Spacing.sm * 2;
+            y: (parent.height - (16px + Spacing.sm + label-text.preferred-height)) / 2 + 16px + Spacing.sm;
+            text: root.label;
+            color: root.text-color;
+            font-size: Typography.size-sm;
+            font-weight: Typography.weight-medium;
+            wrap: word-wrap;
+            horizontal-alignment: center;
+        }
+    }
+
+    // Selection indicator dot (top-right corner)
+    if root.selected: Rectangle {
+        x: parent.width - self.width - 4px;
+        y: 4px;
+        width: 8px;
+        height: 8px;
+        border-radius: 4px;
+        background: Theme.primary;
+    }
+
+    // FocusScope BEFORE TouchArea (like nav_item.slint)
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    // TouchArea AFTER FocusScope
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}

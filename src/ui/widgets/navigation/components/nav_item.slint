@@ -14,7 +14,9 @@ export component NavItem inherits Rectangle {
     // Accessibility (for screen readers)
     accessible-role: button;
     accessible-label: text;
-    accessible-action-default => { root.clicked(); }
+    accessible-action-default => {
+        root.clicked();
+    }
 
     // Enable keyboard focus via Tab
     forward-focus: focus-scope;
@@ -23,10 +25,7 @@ export component NavItem inherits Rectangle {
     border-radius: Spacing.border-radius;
 
     // Dynamic background: active > pressed > hover > transparent
-    background: active ? Theme.nav-active-background
-              : touch.pressed ? Theme.input-border
-              : touch.has-hover ? Theme.nav-active-background
-              : transparent;
+    background: active ? Theme.nav-active-background : touch.pressed ? Theme.input-border : touch.has-hover ? Theme.nav-active-background : transparent;
     animate background { duration: 150ms; }
 
     // Focus ring (only when not active, since active has its own indicator)
@@ -47,7 +46,9 @@ export component NavItem inherits Rectangle {
 
     // Click handler for navigation
     touch := TouchArea {
-        clicked => { root.clicked(); }
+        clicked => {
+            root.clicked();
+        }
     }
 
     // Active indicator bar (left side) - visible in both states
@@ -63,15 +64,14 @@ export component NavItem inherits Rectangle {
 
     // Icon - centered when collapsed, left-aligned when expanded
     Image {
-        x: is-collapsed
-            ? (root.width - Spacing.icon-size) / 2
-            : Spacing.md;
+        x: is-collapsed ? (root.width - Spacing.icon-size) / 2 : Spacing.md;
         y: (root.height - Spacing.icon-size) / 2;
         width: Spacing.icon-size;
         height: Spacing.icon-size;
         source: icon;
-        colorize: active ? white : Theme.text-muted;
+        colorize: active ? Theme.text-inverse : Theme.text-muted;
         image-fit: contain;
+        accessible-role: none;
     }
 
     // Text label - only visible when expanded
@@ -79,7 +79,7 @@ export component NavItem inherits Rectangle {
         x: Spacing.md + Spacing.icon-size + Spacing.md;
         y: (root.height - self.height) / 2 + 1px;
         text: root.text;
-        color: active ? white : Theme.text-muted;
+        color: active ? Theme.text-inverse : Theme.text-muted;
         font-size: Typography.size-base;
         font-weight: Typography.weight-medium;
     }

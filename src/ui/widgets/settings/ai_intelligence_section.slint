@@ -1,0 +1,45 @@
+import { Theme, Spacing, Typography } from "../../shared/mod.slint";
+import {
+    SecondaryButton,
+    ToggleSwitch,
+    SettingsCard,
+    SettingsSection,
+} from "../../shared/components/mod.slint";
+
+// AI & Intelligence settings section
+export component AiIntelligenceSection inherits SettingsSection {
+    in property <bool> is-mobile: false;
+    in property <bool> ai-enabled: true;
+
+    callback ai-enabled-changed(bool);
+    callback open-mcp-docs();
+
+    icon: @image-url("../../assets/icons/sparkles.svg");
+    title: "AI & Intelligence";
+
+    ToggleSwitch {
+        label: "Enable AI Features";
+        description: "Allow the application to process text for summaries and insights.";
+        checked: root.ai-enabled;
+        toggled(value) => {
+            root.ai-enabled-changed(value);
+        }
+    }
+
+    SettingsCard {
+        icon: @image-url("../../assets/icons/terminal.svg");
+        title: "MCP Integration";
+        description: "Connect this application as a Model Context Protocol (MCP) server to use with Claude Desktop, Cursor, and other AI tools.";
+        is-mobile: root.is-mobile;
+
+        SecondaryButton {
+            text: "View Integration Documentation";
+            has-icon: true;
+            icon: @image-url("../../assets/icons/external-link.svg");
+            has-border: true;
+            clicked => {
+                root.open-mcp-docs();
+            }
+        }
+    }
+}

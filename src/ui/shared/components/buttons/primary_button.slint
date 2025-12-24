@@ -1,0 +1,96 @@
+import { Theme, Spacing, Typography } from "../../tokens.slint";
+
+// Primary button with optional icon
+export component PrimaryButton inherits Rectangle {
+    in property <string> text;
+    in property <image> icon;
+    in property <bool> has-icon: false;
+    in property <string> accessible-text: text;
+    property <bool> icon-only: has-icon && text == "";
+
+    callback clicked();
+
+    // Accessibility (for screen readers)
+    accessible-role: button;
+    accessible-label: accessible-text;
+    accessible-action-default => {
+        root.clicked();
+    }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    border-radius: Spacing.border-radius-lg;
+
+    // Dynamic background based on interaction state
+    background: touch.pressed ? Theme.button-primary-pressed : touch.has-hover ? Theme.button-primary-hover : Theme.button-primary;
+    animate background { duration: 150ms; }
+
+    // Focus ring (visible when focused via keyboard)
+    border-width: focus-scope.has-focus ? 2px : 0px;
+    border-color: Theme.text-primary;
+    animate border-width { duration: 150ms; }
+
+    // Shadow effect
+    drop-shadow-blur: 15px;
+    drop-shadow-offset-y: 10px;
+    drop-shadow-color: Theme.shadow-primary;
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        width: 100%;
+        height: 100%;
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    text-element := Text {
+        x: has-icon ? Spacing.lg + Spacing.icon-size-sm + Spacing.sm : (root.width - self.width) / 2;
+        y: (root.height - self.height) / 2 + 1px;
+        text: root.text;
+        color: Theme.text-inverse;
+        font-size: Typography.size-base;
+        font-weight: Typography.weight-medium;
+        wrap: word-wrap;
+        visible: text != "";
+    }
+
+    property <length> content-height: (text-element.preferred-height > (has-icon ? Spacing.icon-size-sm : 0px)
+        ? text-element.preferred-height
+        : (has-icon ? Spacing.icon-size-sm : 0px)) + Spacing.md * 2;
+
+    height: content-height < Spacing.button-height
+        ? Spacing.button-height
+        : content-height;
+
+    width: icon-only
+        ? Spacing.button-height
+        : (has-icon
+            ? Spacing.lg + Spacing.icon-size-sm + Spacing.sm + text-element.preferred-width + Spacing.lg
+            : Spacing.lg + text-element.preferred-width + Spacing.lg);
+
+    // Icon
+    if has-icon: Image {
+        x: icon-only ? (root.width - Spacing.icon-size-sm) / 2 : Spacing.lg;
+        y: (root.height - Spacing.icon-size-sm) / 2;
+        width: Spacing.icon-size-sm;
+        height: Spacing.icon-size-sm;
+        source: icon;
+        colorize: Theme.text-inverse;
+        image-fit: contain;
+        accessible-role: none;
+    }
+
+    touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        clicked => {
+            root.clicked();
+        }
+    }
+}

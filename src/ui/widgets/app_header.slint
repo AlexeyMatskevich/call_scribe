@@ -29,14 +29,16 @@ export component AppHeader inherits Rectangle {
 
         // Left side: Hamburger button + Page title
         Rectangle {
-            x: Spacing.md;
+            x: Spacing.sm;
             y: 0;
             height: 100%;
 
             HamburgerButton {
                 x: 0;
                 y: (parent.height - self.height) / 2;
-                clicked => { root.menu-clicked(); }
+                clicked => {
+                    root.menu-clicked();
+                }
             }
 
             // Page title
@@ -61,7 +63,9 @@ export component AppHeader inherits Rectangle {
                 x: 0;
                 y: (parent.height - self.height) / 2;
                 is-compact: true;
-                clicked => { root.start-session-clicked(); }
+                clicked => {
+                    root.start-session-clicked();
+                }
             }
 
             UserAvatar {
@@ -104,7 +108,9 @@ export component AppHeader inherits Rectangle {
                         x: 0;
                         y: (parent.height - self.height) / 2;
                         is-compact: false;
-                        clicked => { root.start-session-clicked(); }
+                        clicked => {
+                            root.start-session-clicked();
+                        }
                     }
                 }
 

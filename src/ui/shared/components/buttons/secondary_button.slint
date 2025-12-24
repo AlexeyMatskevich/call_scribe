@@ -1,0 +1,96 @@
+import { Theme, Spacing, Typography } from "../../tokens.slint";
+
+// Secondary button (outlined/ghost style)
+// Two variants from Figma:
+// 1. Solid: bg #262626, no border (default)
+// 2. Outlined: bg rgba(38,38,38,0.3), border #262626 0.5px (has-border: true)
+export component SecondaryButton inherits Rectangle {
+    in property <string> text;
+    in property <image> icon;
+    in property <bool> has-icon: false;
+    in property <bool> has-border: false;  // Use outlined variant
+    in property <string> accessible-text: text;
+
+    callback clicked();
+
+    // Base colors for dynamic hover calculation
+    property <color> solid-base: Theme.button-secondary;
+    property <color> outlined-base: Theme.button-secondary-30;
+
+    // Accessibility (for screen readers)
+    accessible-role: button;
+    accessible-label: accessible-text;
+    accessible-action-default => {
+        root.clicked();
+    }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    border-radius: Spacing.border-radius;  // 8px from Figma
+
+    // Border: outlined variant has 0.5px border, solid has none (except focus)
+    border-width: focus-scope.has-focus ? 2px : has-border ? 0.5px : 0px;
+    border-color: focus-scope.has-focus ? Theme.primary : Theme.button-secondary;
+    animate border-width { duration: 150ms; }
+
+    // Dynamic background using brighter() for maintainable hover states
+    // Dark backgrounds use brighter() instead of darker()
+    // brighter(0.3) = 30% lighter on hover, brighter(0.5) = 50% lighter on press
+    background: touch.pressed ? (has-border ? outlined-base.brighter(0.8) : solid-base.brighter(0.5)) : touch.has-hover ? (has-border ? outlined-base.brighter(0.5) : solid-base.brighter(0.3)) : (has-border ? outlined-base : solid-base);
+    animate background { duration: 150ms; }
+
+    text-element := Text {
+        x: has-icon ? Spacing.md + Spacing.icon-size-sm + Spacing.sm : Spacing.md;
+        y: (root.height - self.height) / 2 + 1px;
+        text: root.text;
+        color: Theme.text-inverse;
+        font-size: Typography.size-base;
+        font-weight: Typography.weight-medium;
+        wrap: word-wrap;
+    }
+
+    property <length> content-height: (text-element.preferred-height > (has-icon ? Spacing.icon-size-sm : 0px)
+        ? text-element.preferred-height
+        : (has-icon ? Spacing.icon-size-sm : 0px)) + Spacing.sm * 2;
+
+    height: content-height < Spacing.button-height-sm
+        ? Spacing.button-height-sm
+        : content-height;
+
+    width: has-icon
+        ? Spacing.md + Spacing.icon-size-sm + Spacing.sm + text-element.preferred-width + Spacing.md
+        : Spacing.md + text-element.preferred-width + Spacing.md;
+
+    // Icon
+    if has-icon: Image {
+        x: Spacing.md;
+        y: (root.height - Spacing.icon-size-sm) / 2;
+        width: Spacing.icon-size-sm;
+        height: Spacing.icon-size-sm;
+        source: icon;
+        colorize: Theme.text-inverse;
+        accessible-role: none;
+    }
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        width: 100%;
+        height: 100%;
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    touch := TouchArea {
+        width: 100%;
+        height: 100%;
+        clicked => {
+            root.clicked();
+        }
+    }
+}

@@ -1,0 +1,52 @@
+import { Theme, Spacing, Typography } from "../../shared/mod.slint";
+import {
+    ToggleSwitch,
+    SettingsSection,
+} from "../../shared/components/mod.slint";
+
+// Audio & Recording settings section
+export component AudioRecordingSection inherits SettingsSection {
+    in property <bool> save-audio: false;
+
+    callback save-audio-changed(bool);
+
+    icon: @image-url("../../assets/icons/hard-drive.svg");
+    title: "Audio & Recording";
+
+    VerticalLayout {
+        spacing: Spacing.md;
+
+        ToggleSwitch {
+            label: "Save Audio Recordings";
+            checked: root.save-audio;
+            toggled(value) => {
+                root.save-audio-changed(value);
+            }
+        }
+
+        // Warning disclaimer
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+
+            Image {
+                width: 12px;
+                height: 12px;
+                source: @image-url("../../assets/icons/alert-triangle.svg");
+                colorize: Theme.warning;
+                vertical-alignment: center;
+                accessible-role: none;
+            }
+
+            Text {
+                text: "Legal Disclaimer: Verify local laws regarding call recording.";
+                color: Theme.warning;
+                font-size: Typography.size-sm;
+                font-weight: Typography.weight-medium;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                horizontal-alignment: left;
+            }
+        }
+    }
+}

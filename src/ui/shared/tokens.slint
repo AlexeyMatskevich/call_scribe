@@ -14,16 +14,24 @@ export global Theme {
 
     // Accent colors
     out property <color> primary: #615fff;
+    out property <color> accent-purple: #4f39f6;
     out property <color> button-primary: #4f39f6;
     out property <color> button-primary-hover: #5d4af7;
     out property <color> button-primary-pressed: #4535c4;
+
+    // Button secondary
+    out property <color> button-secondary: #262626;
+    out property <color> button-secondary-30: #2626264d;  // 30% opacity
 
     // Text colors
     out property <color> text-primary: #f4f4f5;
     out property <color> text-secondary: #e4e4e7;
     out property <color> text-muted: #9f9fa9;
     out property <color> text-dimmed: #71717b;
-    out property <color> text-placeholder: #52525c;
+    out property <color> text-placeholder: #52525b;
+    out property <color> text-inverse: #fafafa;      // For dark buttons/elements
+    out property <color> text-on-light: #171717;    // For light backgrounds
+    out property <color> text-light: #d4d4d8;       // Light gray text
 
     // Navigation colors
     out property <color> nav-active-background: #27272a;
@@ -36,6 +44,18 @@ export global Theme {
     // Misc
     out property <color> separator: #3f3f47;
     out property <color> avatar-background: #27272a;
+
+    // Semantic colors
+    out property <color> warning: #fe9a00;
+    out property <color> icon-sun: #f59e0b;
+
+    // Surfaces
+    out property <color> surface-solid: #18181b;    // Solid dark surface (no opacity)
+    out property <color> overlay: #00000080;        // 50% black overlay
+
+    // Shadows
+    out property <color> shadow-primary: #312c8533;  // Primary button shadow
+    out property <color> shadow-accent: #615fff33;   // Accent glow
 }
 
 export global Spacing {
@@ -58,12 +78,16 @@ export global Spacing {
     out property <length> mobile-header-height: 48px;
     out property <length> nav-item-height: 40px;
     out property <length> button-height: 40px;
+    out property <length> button-height-sm: 36px;
     out property <length> input-height: 46px;
     out property <length> icon-size: 20px;
     out property <length> icon-size-sm: 16px;
     out property <length> border-radius: 8px;
     out property <length> border-radius-lg: 10px;
     out property <length> border-radius-xl: 14px;
+    out property <length> settings-page-max-width-desktop: 800px;
+    out property <length> settings-theme-option-min-width: 128px;
+    out property <length> settings-theme-option-max-width: 180px;
 }
 
 export global Typography {

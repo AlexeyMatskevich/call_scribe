@@ -1,0 +1,64 @@
+import { Theme, Spacing, Typography } from "../../tokens.slint";
+
+// Icon-only button with configurable shape and style
+// Used for hamburger menu, close buttons, action buttons, etc.
+export component IconButton inherits Rectangle {
+    in property <image> icon;
+    in property <color> icon-color: Theme.text-muted;
+    in property <length> size: 36px;
+    in property <string> accessible-text;  // Required for screen readers
+    in property <bool> circular: false;    // false = rounded square, true = circle
+
+    callback clicked();
+
+    // Accessibility (for screen readers)
+    accessible-role: button;
+    accessible-label: accessible-text;
+    accessible-action-default => {
+        root.clicked();
+    }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    width: size;
+    height: size;
+    border-radius: circular ? size / 2 : Spacing.border-radius;
+
+    // Dynamic background based on interaction state
+    background: touch.pressed ? Theme.input-border : touch.has-hover ? Theme.nav-active-background : transparent;
+    animate background { duration: 150ms; }
+
+    // Focus ring
+    border-width: focus-scope.has-focus ? 2px : 0px;
+    border-color: Theme.primary;
+    animate border-width { duration: 150ms; }
+
+    // Keyboard focus handler
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.clicked();
+                accept
+            }
+            reject
+        }
+    }
+
+    Image {
+        x: (parent.width - Spacing.icon-size) / 2;
+        y: (parent.height - Spacing.icon-size) / 2;
+        width: Spacing.icon-size;
+        height: Spacing.icon-size;
+        source: icon;
+        colorize: icon-color;
+        image-fit: contain;
+        accessible-role: none;
+    }
+
+    touch := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}

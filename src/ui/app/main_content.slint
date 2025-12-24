@@ -10,6 +10,8 @@ import { SettingsPage } from "../pages/settings.slint";
 export component MainContent inherits Rectangle {
     in property <int> current-page: 0;
     in property <bool> is-mobile: false;
+    in property <bool> is-tablet: false;
+    in property <bool> is-desktop: true;
 
     callback menu-clicked();
 
@@ -23,13 +25,16 @@ export component MainContent inherits Rectangle {
         AppHeader {
             is-mobile: root.is-mobile;
             title: page-titles[current-page];
-            menu-clicked => { root.menu-clicked(); }
+            menu-clicked => {
+                root.menu-clicked();
+            }
         }
 
         // Content area - fills remaining space
         Rectangle {
             vertical-stretch: 1;
             background: Theme.background;
+            clip: true;  // Prevent page content from overflowing
 
             // Show page based on current-page index
             SessionsPage {
@@ -54,6 +59,9 @@ export component MainContent inherits Rectangle {
                 visible: current-page == 3;
                 width: 100%;
                 height: 100%;
+                is-mobile: root.is-mobile;
+                is-tablet: root.is-tablet;
+                is-desktop: root.is-desktop;
             }
         }
     }

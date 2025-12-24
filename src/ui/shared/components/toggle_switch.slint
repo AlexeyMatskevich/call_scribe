@@ -1,0 +1,105 @@
+import { Theme, Spacing, Typography } from "../tokens.slint";
+
+// Toggle switch with label and description
+// Keyboard: Tab to focus, Enter/Space to toggle
+export component ToggleSwitch inherits Rectangle {
+    in property <string> label;
+    in property <string> description;
+    in-out property <bool> checked: false;
+
+    callback toggled(bool);
+
+    // Accessibility
+    accessible-role: switch;
+    accessible-label: label;
+    accessible-checked: checked;
+    accessible-action-default => {
+        root.checked = !root.checked;
+        root.toggled(root.checked);
+    }
+
+    // Enable keyboard focus via Tab
+    forward-focus: focus-scope;
+
+    height: content.preferred-height;
+
+    HorizontalLayout {
+        spacing: Spacing.lg;
+        alignment: space-between;
+
+        content := VerticalLayout {
+            spacing: 2px;
+            alignment: center;
+
+            Text {
+                text: root.label;
+                color: Theme.text-primary;
+                font-size: Typography.size-lg;
+                font-weight: Typography.weight-medium;
+                horizontal-alignment: left;
+            }
+
+            if root.description != "": Text {
+                text: root.description;
+                color: Theme.text-muted;
+                font-size: Typography.size-base;
+                font-weight: Typography.weight-regular;
+                horizontal-alignment: left;
+                wrap: word-wrap;
+            }
+        }
+
+        // Toggle track wrapper
+        VerticalLayout {
+            alignment: center;
+
+            track := Rectangle {
+                width: 32px;
+                height: 18px;
+                border-radius: 9px;
+                // Hover lightens the track slightly
+                background: root.checked ? (touch.has-hover ? Theme.button-primary-hover : Theme.primary) : (touch.has-hover ? Theme.text-placeholder : Theme.input-border);
+                animate background { duration: 150ms; }
+
+                // Focus ring on track
+                border-width: focus-scope.has-focus ? 2px : 0px;
+                border-color: Theme.text-primary;
+                animate border-width { duration: 150ms; }
+
+                // Thumb
+                thumb := Rectangle {
+                    width: 14px;
+                    height: 14px;
+                    border-radius: 7px;
+                    background: Theme.text-primary;
+                    y: (parent.height - self.height) / 2;
+                    x: root.checked ? (parent.width - self.width - 2px) : 2px;
+                    animate x {
+                        duration: 150ms;
+                        easing: ease-out;
+                    }
+                }
+            }
+        }
+    }
+
+    // FocusScope BEFORE TouchArea (like nav_item.slint)
+    focus-scope := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Return || event.text == " ") {
+                root.checked = !root.checked;
+                root.toggled(root.checked);
+                accept
+            }
+            reject
+        }
+    }
+
+    // TouchArea AFTER FocusScope
+    touch := TouchArea {
+        clicked => {
+            root.checked = !root.checked;
+            root.toggled(root.checked);
+        }
+    }
+}

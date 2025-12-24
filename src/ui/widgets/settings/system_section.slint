@@ -1,0 +1,24 @@
+import { Theme, Spacing, Typography } from "../../shared/mod.slint";
+import {
+    ToggleSwitch,
+    SettingsSection,
+} from "../../shared/components/mod.slint";
+
+// System settings section
+export component SystemSection inherits SettingsSection {
+    in property <bool> background-operation: true;
+
+    callback background-operation-changed(bool);
+
+    icon: @image-url("../../assets/icons/layout.svg");
+    title: "System";
+
+    ToggleSwitch {
+        label: "Background Operation";
+        description: "Keep app running in the system tray when window is closed.";
+        checked: root.background-operation;
+        toggled(value) => {
+            root.background-operation-changed(value);
+        }
+    }
+}
